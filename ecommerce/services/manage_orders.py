@@ -9,13 +9,7 @@ class ManageOrderService:
         self.user = user
 
     def submit_order(self):
-        try:
-            geo_data = self.get_address_country_postal_code()
-        except InvalidLatLongException:
-            return {
-                "ok": False,
-                "error": "Invalid Lat OR Long"
-            }
+        geo_data = self.get_address_country_postal_code()
         order = Orders(user=self.user, house=self.request_payload.get("house"), lat=self.request_payload.get("lat"),
                        long=self.request_payload.get("long"), country=geo_data.get("country"),
                        postcode=geo_data.get("postcode"), address=geo_data.get("address"))

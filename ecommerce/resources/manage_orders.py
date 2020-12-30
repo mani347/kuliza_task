@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from ecommerce.common.decorators import validate_api_payload
 from ecommerce.common.serializers import SubmitOrderRequestSerializer
 from ecommerce.services.manage_orders import ManageOrderService
+from ecommerce.common.exceptions import InvalidLatLongException
 
 
 class ManageOrders(APIView):
@@ -15,7 +16,14 @@ class ManageOrders(APIView):
     def post(self, request):
         request_payload = request.data
         service = ManageOrderService(request.user, request_payload)
-        response = service.submit_order()
+        try:
+            response = service.submit_order()
+        except InvalidLatLongException:
+            response = {
+                "ok": False,
+                "error": "Invalid Lat OR Long"
+            }
+            return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)
         return JsonResponse(data=response, status=status.HTTP_200_OK)
 
     def get(self, request):
