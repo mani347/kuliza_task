@@ -1,0 +1,2 @@
+class InvalidLatLongException(Exception):
+    pass
